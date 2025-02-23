@@ -7,7 +7,7 @@ from langchain_community.llms import Ollama
 
 
 def load_documents():
-    document_loader = PyPDFLoader("./data/Software Development Proposal NIC.pdf")
+    document_loader = PyPDFLoader("./data/cudos-white-paper.pdf")
     return document_loader
 
 
@@ -50,6 +50,6 @@ def chain_retriever(question):
 
 
 if __name__ == '__main__':
-    chain = chain_retriever("what is the name of the frontend dev")
+    chain = chain_retriever("what is cudos")
 
     print(chain)
