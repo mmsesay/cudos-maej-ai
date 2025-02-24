@@ -31,25 +31,33 @@ def add_to_chroma_vector_db(chunks: list[Document]):
 
 
 def chain_retriever(question):
+    print("question: ", question)
+    # load the document
     docs = load_documents().load()
+
+    print('docs: ', docs[0])
+
+    # get documents in split chunks
     chunks = split_documents(docs)
 
+    print('chunks: ', chunks)
+
+    # pass chunks to vector db and retrieve the similarity with nearest of 3
     retriever = add_to_chroma_vector_db(chunks).as_retriever(search_type="similarity", search_kwargs={"k": 3})
+
+    # invoke the retriever with the question to get the similarity items
     retrieved_docs = retriever.invoke(question)
 
+    # iterate over the retrieved_docs, get each page content and hold them as the context
     context = ' '.join([doc.page_content for doc in retrieved_docs])
 
+    # initialize the LLM and model
     llm = Ollama(model="llama3.2")
-    response = llm.invoke(f"""Answer the question according to the context
-        given very briefly: 
-        Question: {question}.
-        Context: {context}         
+
+    response = llm.invoke(f"""
+        You are a cudos assistant. Provide a 500 maximum words and concise response to user\'s question.:
+        Context: {context}
+        Question: {question} 
     """)
 
     return response
-
-
-if __name__ == '__main__':
-    chain = chain_retriever("what is cudos")
-
-    print(chain)
